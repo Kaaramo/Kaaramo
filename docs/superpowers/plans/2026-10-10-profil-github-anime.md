@@ -28,3 +28,4 @@
 - [x] Panneaux : `./contributions.sh` (grille), `cat portrait.txt` (ASCII en traits depuis l'avatar), `whoami --stats` (six tuiles, histogramme mensuel), `cat about.md`, `./stack.sh` (stack du portfolio).
 - [x] Robot quotidien étendu aux statistiques.
 - [x] Vérification : cinq scripts exécutés, cinq SVG valides, rendu final regardé à l'image.
+- [x] Lunettes corrigées sur les quatre avatars (montures noires épaisses, verres anti-lumière bleue, modèle : photo du GITEX) ; avatar retenu : v2-c.
