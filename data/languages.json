@@ -1,0 +1,21 @@
+{
+ "repositories": 40,
+ "excluded": [
+  "Jupyter Notebook"
+ ],
+ "bytes": {
+  "TypeScript": 26362818,
+  "HTML": 4793674,
+  "Python": 2259425,
+  "JavaScript": 1724670,
+  "CSS": 999936,
+  "PLpgSQL": 37335,
+  "Shell": 29401,
+  "PLSQL": 10543,
+  "Dockerfile": 6816,
+  "Cypher": 5393,
+  "SCSS": 3913,
+  "Makefile": 3376,
+  "Mako": 594
+ }
+}

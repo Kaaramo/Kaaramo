@@ -1,0 +1,124 @@
+[
+ {
+  "name": "SKILLNAV",
+  "url": "https://github.com/Kaaramo/SKILLNAV",
+  "tagline": "Job-market observatory for AI & data skills",
+  "description": "Skills Navigator: AI & data science job-market observatory built with web mining, NLP (DistilBERT), Neo4j and ARIMA.",
+  "language": "Jupyter Notebook",
+  "languages": {
+   "Jupyter Notebook": 4322593,
+   "Python": 629303,
+   "TypeScript": 200527,
+   "CSS": 56776,
+   "JavaScript": 23545,
+   "Cypher": 5393,
+   "Makefile": 3376
+  },
+  "topics": [
+   "data-science",
+   "distilbert",
+   "neo4j",
+   "nlp"
+  ],
+  "commits": 52
+ },
+ {
+  "name": "Radar",
+  "url": "https://github.com/Kaaramo/Radar",
+  "tagline": "Competitive intelligence run by an AI agent",
+  "description": "Competitive intelligence platform driven by an autonomous AI agent: weekly web scan, CRAAP, SWOT, PESTEL and weak signals.",
+  "language": "TypeScript",
+  "languages": {
+   "TypeScript": 543198,
+   "CSS": 24430,
+   "JavaScript": 20124,
+   "Shell": 10855,
+   "Dockerfile": 3889,
+   "Python": 3817
+  },
+  "topics": [
+   "ai-agent",
+   "competitive-intelligence",
+   "llm",
+   "nextjs"
+  ],
+  "commits": 28
+ },
+ {
+  "name": "Finance-CyberAttack-Analytics",
+  "url": "https://github.com/Kaaramo/Finance-CyberAttack-Analytics",
+  "tagline": "Cyberattacks on the financial sector, 2015-2025",
+  "description": "Analytics dashboard of cyberattacks on the financial sector (2015-2025): FastAPI and Pandas backend, Next.js and Plotly frontend.",
+  "language": "Jupyter Notebook",
+  "languages": {
+   "Jupyter Notebook": 5850316,
+   "TypeScript": 40540,
+   "Python": 26882,
+   "CSS": 998,
+   "JavaScript": 797
+  },
+  "topics": [
+   "cybersecurity",
+   "data-analysis",
+   "fastapi",
+   "finance"
+  ],
+  "commits": 6
+ },
+ {
+  "name": "ai5d-digital-design-system",
+  "url": "https://github.com/Kaaramo/ai5d-digital-design-system",
+  "tagline": "Design system of the AI5D products",
+  "description": "AI5D design system: tokens, components and rules that turn the brand into consistent product interfaces.",
+  "language": "TypeScript",
+  "languages": {
+   "TypeScript": 724500,
+   "HTML": 236572,
+   "JavaScript": 55444,
+   "CSS": 35216
+  },
+  "topics": [
+   "design-system",
+   "design-tokens",
+   "react",
+   "typescript"
+  ],
+  "commits": 95
+ },
+ {
+  "name": "ai5d-auth",
+  "url": "https://github.com/Kaaramo/ai5d-auth",
+  "tagline": "Identity SDK of the AI5D ecosystem",
+  "description": "@ai5d/auth: identity SDK for the AI5D ecosystem. Who is the user, in which organization, with which rights.",
+  "language": "TypeScript",
+  "languages": {
+   "TypeScript": 149477,
+   "JavaScript": 535
+  },
+  "topics": [
+   "authentication",
+   "identity",
+   "multi-tenant",
+   "sdk"
+  ],
+  "commits": 31
+ },
+ {
+  "name": "Vehicle-Damage-Detection",
+  "url": "https://github.com/Kaaramo/Vehicle-Damage-Detection",
+  "tagline": "Damage detection with convolutional networks",
+  "description": "Vehicle damage detection and localization with convolutional neural networks (deep learning course project).",
+  "language": "Jupyter Notebook",
+  "languages": {
+   "Jupyter Notebook": 8099496,
+   "Python": 4887
+  },
+  "topics": [
+   "cnn",
+   "computer-vision",
+   "deep-learning",
+   "jupyter"
+  ],
+  "commits": 2
+ }
+]
