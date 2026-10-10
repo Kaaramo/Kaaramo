@@ -1,90 +1,87 @@
-"""Portrait ASCII animé : chaque ligne se tape de gauche à droite, avec un curseur, puis l'image reste figée."""
+"""Panneau ASCII : portrait en traits tiré de l'avatar illustré. Chaque ligne se tape de gauche à droite,
+avec un curseur, puis l'image reste figée."""
 from pathlib import Path
 
 import cv2
 import numpy as np
-from PIL import Image
+
+from theme import GREEN, esc, frame
 
 ROOT = Path(__file__).resolve().parent.parent
-SRC = ROOT / "scripts" / "portrait-detoure.png"
+SRC = ROOT / "assets" / "avatar" / "avatar.png"
 OUT = ROOT / "karamo-ascii.svg"
 
-RAMP = " .`:-=+*cs#%@"
-COLS, ROWS = 66, 46          # cases de 1 car. ; une case de police mono fait ~0,6 de large pour 1 de haut
-CW, LH = 6.0, 9.0            # largeur d'un caractère et hauteur de ligne, en px
-PAD = 14
-LINE_DUR = 0.09              # durée de frappe d'une ligne, en s
+W, H = 370, 470
+COLS, ROWS = 60, 46
+CW, LH = 5.65, 8.7
+FS = 9.4
+X0, Y0 = 16, 50
+RAMP = " .`':-=+*%#@"
+LINE_DUR = 0.07
 
 
-def load_grid():
-    rgba = Image.open(SRC).convert("RGBA")
-    # recadrage tête et épaules, comme sur le CV
-    rgba = rgba.crop((101, 100, 521, 560))
-    # luminance du sujet seul, contraste local renforcé (CLAHE) pour faire ressortir les traits du visage
-    rgb = np.asarray(rgba.convert("RGB"))
-    lum = cv2.cvtColor(rgb, cv2.COLOR_RGB2GRAY)
-    lum = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(6, 6)).apply(lum)
-    gray = Image.fromarray(lum).resize((COLS, ROWS), Image.LANCZOS)
-    a = np.asarray(gray, dtype=float) / 255.0
-    alpha = np.asarray(rgba.split()[-1].resize((COLS, ROWS), Image.LANCZOS), dtype=float) / 255.0
-    subj = a[alpha >= 0.25]
-    lo, hi = np.percentile(subj, 2), np.percentile(subj, 98)
-    a = np.clip((a - lo) / (hi - lo + 1e-6), 0, 1) ** 0.8
-    return a, alpha
+def grid():
+    img = cv2.imread(str(SRC))
+    h, w = img.shape[:2]
+    target = (COLS * CW) / (ROWS * LH)
+    cw = int(h * target)
+    x0 = (w - cw) // 2
+    img = img[:, x0:x0 + cw]
+    # fond crème uni : masque par distance à la couleur des coins
+    corners = np.concatenate([img[:40, :40].reshape(-1, 3), img[:40, -40:].reshape(-1, 3)])
+    bg = corners.mean(axis=0)
+    dist = np.linalg.norm(img.astype(float) - bg, axis=2)
+    mask = (dist > 28).astype(np.uint8) * 255
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((9, 9), np.uint8))
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # traits : contours de l'illustration, épaissis pour survivre à la réduction
+    edges = cv2.Canny(cv2.GaussianBlur(gray, (7, 7), 0), 55, 140)
+    edges = cv2.dilate(edges, np.ones((7, 7), np.uint8))
+    size = (COLS, ROWS)
+    e = cv2.resize(edges, size, interpolation=cv2.INTER_AREA) / 255.0
+    g = cv2.resize(gray, size, interpolation=cv2.INTER_AREA) / 255.0
+    m = cv2.resize(mask, size, interpolation=cv2.INTER_AREA) / 255.0
+    # intensité : le trait domine, un léger modelé vient des zones claires
+    v = np.clip(e * 1.9 + np.clip(g - 0.55, 0, 1) * 0.9, 0, 1)
+    return v, m
 
 
-def to_lines(a, alpha):
-    lines = []
+def lines():
+    v, m = grid()
+    out = []
     for y in range(ROWS):
-        row = []
+        row = ""
         for x in range(COLS):
-            if alpha[y, x] < 0.25:
-                row.append(" ")
+            if m[y, x] < 0.35:
+                row += " "
                 continue
-            # fond sombre : les zones claires reçoivent les caractères les plus denses
-            idx = int(round(a[y, x] * (len(RAMP) - 1)))
-            row.append(RAMP[max(1, idx)])
-        lines.append("".join(row).rstrip())
-    return lines
-
-
-def esc(s):
-    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            idx = int(round(v[y, x] * (len(RAMP) - 1)))
+            row += RAMP[idx] if v[y, x] >= 0.12 else " "
+        out.append(row.rstrip())
+    return out
 
 
 def build():
-    lines = to_lines(*load_grid())
-    w = PAD * 2 + COLS * CW
-    h = PAD * 2 + ROWS * LH + 18
-    parts = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{w:.0f}" height="{h:.0f}" viewBox="0 0 {w:.0f} {h:.0f}" role="img" aria-label="Portrait ASCII de Karamo Sylla">',
-        "<style>text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:9.6px;fill:#c9e8d4;white-space:pre}"
-        ".cap{fill:#5b7a68;font-size:10px}</style>",
-        f'<rect width="{w:.0f}" height="{h:.0f}" rx="10" fill="#0d1117"/>',
-    ]
-    for i, line in enumerate(lines):
+    ls = lines()
+    css = ".a{font-size:%.1fpx;white-space:pre;fill:#d6dde5}" % FS
+    p = frame(W, H, "cat portrait.txt", css)
+    last = 0
+    for i, line in enumerate(ls):
         if not line.strip():
             continue
-        y = PAD + (i + 1) * LH
+        y = Y0 + (i + 1) * LH
         begin = i * LINE_DUR
-        lw = len(line) * CW
-        cid = f"c{i}"
-        parts.append(
-            f'<clipPath id="{cid}"><rect x="{PAD}" y="{y - LH + 1:.1f}" width="0" height="{LH}">'
-            f'<animate attributeName="width" from="0" to="{lw:.1f}" begin="{begin:.2f}s" dur="{LINE_DUR:.2f}s" fill="freeze"/></rect></clipPath>'
-        )
-        parts.append(f'<text x="{PAD}" y="{y:.1f}" clip-path="url(#{cid})">{esc(line)}</text>')
-    total = len(lines) * LINE_DUR
-    # curseur bloc qui descend avec la frappe puis clignote en bas
-    parts.append(
-        f'<rect x="{PAD}" y="{PAD + 1}" width="{CW:.0f}" height="{LH - 1:.0f}" fill="#39d353">'
-        f'<animate attributeName="y" from="{PAD + 1}" to="{PAD + ROWS * LH - LH + 1:.0f}" dur="{total:.2f}s" fill="freeze"/>'
-        f'<animate attributeName="opacity" values="1;0;1" dur="1s" begin="{total:.2f}s" repeatCount="indefinite"/></rect>'
-    )
-    parts.append(f'<text class="cap" x="{PAD}" y="{h - 10:.0f}">karamo@github ~ $ cat portrait.txt</text>')
-    parts.append("</svg>")
-    OUT.write_text("\n".join(parts), encoding="utf-8")
-    print(f"{OUT.name} : {len([l for l in lines if l.strip()])} lignes, {w:.0f}x{h:.0f}")
+        last = i
+        p.append(f'<clipPath id="c{i}"><rect x="{X0}" y="{y - LH + 1:.1f}" width="0" height="{LH + 1:.1f}">'
+                 f'<animate attributeName="width" from="0" to="{len(line) * CW + 2:.1f}" begin="{begin:.2f}s" dur="{LINE_DUR:.2f}s" fill="freeze"/></rect></clipPath>')
+        p.append(f'<text class="a" x="{X0}" y="{y:.1f}" clip-path="url(#c{i})">{esc(line)}</text>')
+    total = (last + 1) * LINE_DUR
+    p.append(f'<rect x="{X0}" y="{Y0 + 2}" width="{CW:.1f}" height="{LH - 1:.1f}" fill="{GREEN}">'
+             f'<animate attributeName="y" from="{Y0 + 2}" to="{Y0 + last * LH + 2:.1f}" dur="{total:.2f}s" fill="freeze"/>'
+             f'<animate attributeName="opacity" values="1;0;1" dur="1.1s" begin="{total:.2f}s" repeatCount="indefinite"/></rect>')
+    p.append("</svg>")
+    OUT.write_text("\n".join(p), encoding="utf-8")
+    print(f"{OUT.name} : {sum(1 for l in ls if l.strip())} lignes, {W}x{H}")
 
 
 if __name__ == "__main__":

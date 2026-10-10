@@ -19,4 +19,12 @@
 - [x] `README.md` : portrait et carte côte à côte, grille dessous, liens.
 - [x] `.github/workflows/update-profile-art.yml` : rafraîchissement quotidien de la grille.
 - [x] Vérification d'un bloc (2026-10-10) : quatre scripts exécutés sans erreur (371 jours, 328 contributions), trois SVG valides en XML, rendu final regardé à l'image ; portrait retravaillé (rampe inversée, CLAHE, recadrage).
-- [ ] Publication : création du dépôt public `Kaaramo/Kaaramo` par Karamo, poussée après son accord.
+- [x] Publication (2026-10-10) : dépôt public `Kaaramo/Kaaramo` créé par Karamo, poussé ; première action « Update profile art » réussie ; profil vérifié en ligne.
+
+## Version 2 (2026-10-10), sur la référence fournie par Karamo
+
+- [x] Avatar illustré généré avec Higgsfield (GPT Image 2.5, deux photos de Karamo en référence) ; style dessin retenu au second essai.
+- [x] Cadre commun (`scripts/theme.py`) : barre de terminal, commande en titre, même palette pour tous les panneaux.
+- [x] Panneaux : `./contributions.sh` (grille), `cat portrait.txt` (ASCII en traits depuis l'avatar), `whoami --stats` (six tuiles, histogramme mensuel), `cat about.md`, `./stack.sh` (stack du portfolio).
+- [x] Robot quotidien étendu aux statistiques.
+- [x] Vérification : cinq scripts exécutés, cinq SVG valides, rendu final regardé à l'image.

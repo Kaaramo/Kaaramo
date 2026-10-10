@@ -1,3 +1,4 @@
 -r requirements.txt
+opencv-python
 pillow
 numpy
